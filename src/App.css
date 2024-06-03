@@ -53,9 +53,17 @@ button {
   display: flex;
   width: 450px;
   align-items: center;
+  
+  
 }
 
 .todoText {
   flex:1;
 
+}
+
+
+.todoCheckbox {
+ flex:0.1;
+ 
 }

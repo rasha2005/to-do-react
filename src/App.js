@@ -6,6 +6,7 @@ const App = () => {
 const[todo , setTodo] = useState("");
 const [todos , setTodos]  = useState([]);
 const [editId , setEditId] = useState(0);
+const [check , setCheck] = useState([]);
 const handleSubmit = (e) => {
    e.preventDefault();
    if(editId) {
@@ -36,6 +37,15 @@ const handleEdit = (id) => {
  setEditId(id)
  
 };
+
+const handleCheckBox = (id) => {
+  setCheck((prev) => ({
+    ...prev,
+    [id]: !prev[id],
+  }));
+  
+
+}
   return(
    
     <div className="App">
@@ -48,7 +58,9 @@ const handleEdit = (id) => {
       <ul className="allTodos">
         {
           todos.map((t) => (
-            <li className="singleTodo"><span className="todoText" key={t.id}>{t.todo}</span>
+            <li className="singleTodo">
+               <input type="checkbox" className="todoCheckbox" checked={!!check[t.id]} onChange={() => handleCheckBox(t.id)}/>
+              <span className="todoText" style={{textDecoration:check[t.id]?'line-through' : 'none'}} key={t.id}>{t.todo}</span>
             <button onClick={() => handleEdit(t.id)}>edit</button>
             <button onClick={() => handleDelete(t.id) }>delete</button>
             </li>
