@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState  , useEffect} from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./App.css"
 
 const App = () => {
@@ -7,8 +9,45 @@ const[todo , setTodo] = useState("");
 const [todos , setTodos]  = useState([]);
 const [editId , setEditId] = useState(0);
 const [check , setCheck] = useState([]);
+const [error, setError] = useState("");
+
+
+
+
+useEffect(() => {
+  const storedTodos = JSON.parse(localStorage.getItem("todos"));
+  if (storedTodos) {
+    setTodos(storedTodos);
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
 const handleSubmit = (e) => {
+  const trimmedTodo = todo.trim();
+
+  console.log("Submitting Todo:", trimmedTodo); // Debug log
+
+  if (!trimmedTodo) {
+    console.log("Error: Todo is empty or just spaces");
+    toast.error("Todo cannot be empty or just spaces");
+  }
+
+  const duplicate = todos.find(t => t.todo === trimmedTodo);
+  if (duplicate) {
+    console.log("Duplicate todo found:", duplicate);
+    toast.error("Todo already exists");
+    
+  }
+
+  setError("");
+
    e.preventDefault();
+   if(!trimmedTodo || duplicate) {
+    return;
+   }
    if(editId) {
     const editTodo = todos.find((i) => i.id === editId);
     const updateTodos = todos.map((t) => t.id === editTodo.id ? (
@@ -18,23 +57,27 @@ const handleSubmit = (e) => {
       setTodos(updateTodos);
       setEditId(0);
       setTodo("");
+      toast.success("Todo updated successfully");
       return;
    }
   if(todo !== ''){
     setTodos([{id:`${todo}-${Date.now()}` , todo} , ...todos])
     setTodo("")
   }
+  toast.success("Todo added successfully");
 }
 console.log(todos)
 const handleDelete = ((id) => {
   const delTodo = todos.filter((to) => to.id !== id);
   setTodos([...delTodo]);
+  toast.info("Todo deleted");
 });
 
 const handleEdit = (id) => {
  const editTodo = todos.find((i) => i.id === id);
  setTodo(editTodo.todo);
  setEditId(id)
+
  
 };
 
@@ -69,6 +112,7 @@ const handleCheckBox = (id) => {
        
         
       </ul>
+      <ToastContainer />
     </div>
     </div>
     ) 
